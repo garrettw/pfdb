@@ -92,7 +92,7 @@
                                     </td>
                                     @foreach($attributes as $attribute)
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $product->getAttributeValue($attribute->id) ?? '-' }}
+                                            {{ $product->getEavAttribute($attribute->id) ?? '-' }}
                                         </td>
                                     @endforeach
                                 </tr>

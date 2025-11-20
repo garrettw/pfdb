@@ -64,7 +64,7 @@ class ProductForm
                         
                         $fields = [];
                         foreach ($attributes as $attribute) {
-                            $value = $record ? $record->getAttributeValue($attribute->id) : null;
+                            $value = $record ? $record->getEavAttribute($attribute->id) : null;
                             
                             $field = TextInput::make("attribute_{$attribute->id}")
                                 ->label($attribute->name . ($attribute->unit ? " ({$attribute->unit})" : ''))

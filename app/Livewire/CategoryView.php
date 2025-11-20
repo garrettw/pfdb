@@ -51,19 +51,25 @@ class CategoryView extends Component
             });
         }
         
-        $products = $query->get();
-        
         if ($this->sortBy) {
-            $products = $products->sortBy(function($product) {
-                $value = $product->getAttributeValue($this->sortBy);
+            $attribute = $attributes->firstWhere('id', $this->sortBy);
+            
+            if ($attribute) {
+                $query->leftJoin('product_attributes', function($join) {
+                    $join->on('products.id', '=', 'product_attributes.product_id')
+                         ->where('product_attributes.attribute_id', $this->sortBy);
+                })
+                ->select('products.*');
                 
-                $attribute = Attribute::find($this->sortBy);
-                if ($attribute && $attribute->type === 'numeric' && is_numeric($value)) {
-                    return (float) $value;
+                if ($attribute->type === 'numeric') {
+                    $query->orderByRaw('CAST(product_attributes.value AS REAL) ' . ($this->sortDirection === 'desc' ? 'DESC' : 'ASC'));
+                } else {
+                    $query->orderBy('product_attributes.value', $this->sortDirection);
                 }
-                return $value;
-            }, SORT_REGULAR, $this->sortDirection === 'desc');
+            }
         }
+        
+        $products = $query->get();
         
         return view('livewire.category-view', [
             'attributes' => $attributes,

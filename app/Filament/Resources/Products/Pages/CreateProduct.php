@@ -28,7 +28,7 @@ class CreateProduct extends CreateRecord
         foreach ($attributes as $key => $value) {
             if (str_starts_with($key, 'attribute_') && $value !== null && $value !== '') {
                 $attributeId = str_replace('attribute_', '', $key);
-                $this->record->setAttributeValue($attributeId, $value);
+                $this->record->setEavAttribute($attributeId, $value);
             }
         }
     }

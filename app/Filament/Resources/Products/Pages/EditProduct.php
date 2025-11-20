@@ -45,7 +45,7 @@ class EditProduct extends EditRecord
         foreach ($attributes as $key => $value) {
             if (str_starts_with($key, 'attribute_')) {
                 $attributeId = str_replace('attribute_', '', $key);
-                $this->record->setAttributeValue($attributeId, $value);
+                $this->record->setEavAttribute($attributeId, $value);
             }
         }
     }

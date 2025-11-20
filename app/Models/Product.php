@@ -26,14 +26,21 @@ class Product extends Model
         return $this->hasMany(ProductAttribute::class);
     }
 
-    public function getAttributeValue($attributeId)
+    public function getEavAttribute($attributeId)
     {
+        if ($this->relationLoaded('productAttributes')) {
+            $productAttribute = $this->productAttributes
+                ->firstWhere('attribute_id', $attributeId);
+            
+            return $productAttribute ? $productAttribute->value : null;
+        }
+        
         return $this->productAttributes()
             ->where('attribute_id', $attributeId)
             ->value('value');
     }
 
-    public function setAttributeValue($attributeId, $value)
+    public function setEavAttribute($attributeId, $value)
     {
         return $this->productAttributes()->updateOrCreate(
             ['attribute_id' => $attributeId],
