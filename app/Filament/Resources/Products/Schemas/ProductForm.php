@@ -5,11 +5,10 @@ namespace App\Filament\Resources\Products\Schemas;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use App\Models\Attribute;
+use Filament\Infolists\Components\TextEntry;
 
 class ProductForm
 {
@@ -37,49 +36,49 @@ class ProductForm
                             ->rows(3)
                             ->columnSpanFull(),
                     ]),
-                    
+
                 Section::make('Test Metrics')
-                    ->schema(function (Get $get, $record) {
+                    ->schema(function ($get, $record) {
                         $categoryId = $get('category_id');
-                        
+
                         if (!$categoryId) {
                             return [
-                                Placeholder::make('select_category')
-                                    ->content('Please select a category first to see available metrics.')
+                                TextEntry::make('select_category')
+                                    ->state('Please select a category first to see available metrics.')
                                     ->columnSpanFull(),
                             ];
                         }
-                        
+
                         $attributes = Attribute::where('category_id', $categoryId)
                             ->orderBy('display_order')
                             ->get();
-                            
+
                         if ($attributes->isEmpty()) {
                             return [
-                                Placeholder::make('no_attributes')
-                                    ->content('No attributes defined for this category yet.')
+                                TextEntry::make('no_attributes')
+                                    ->state('No attributes defined for this category yet.')
                                     ->columnSpanFull(),
                             ];
                         }
-                        
+
                         $fields = [];
                         foreach ($attributes as $attribute) {
                             $value = $record ? $record->getEavAttribute($attribute->id) : null;
-                            
+
                             $field = TextInput::make("attribute_{$attribute->id}")
                                 ->label($attribute->name . ($attribute->unit ? " ({$attribute->unit})" : ''))
                                 ->default($value);
-                                
+
                             if ($attribute->type === 'numeric') {
                                 $field->numeric();
                             }
-                            
+
                             $fields[] = $field;
                         }
-                        
+
                         return $fields;
                     })
-                    ->visible(fn (Get $get) => $get('category_id') !== null),
+                    ->visible(fn ($get) => $get('category_id') !== null),
             ]);
     }
 }
