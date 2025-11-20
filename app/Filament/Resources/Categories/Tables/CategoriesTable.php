@@ -22,7 +22,7 @@ class CategoriesTable
                     ->sortable(),
                 TextColumn::make('slug')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('attributes_count')
                     ->counts('attributes')
                     ->label('Attributes')
@@ -36,7 +36,7 @@ class CategoriesTable
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(),
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
