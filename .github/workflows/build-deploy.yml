@@ -1,0 +1,85 @@
+name: 🚀 Deploy website
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  #push:
+    #branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  web-deploy:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          extensions: pdo, intl, zip
+
+      - name: Setup problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+      - name: PHP version
+        run: php -v
+
+      - name: Composer version
+        run: composer -V
+
+      - name: Validate composer.json and composer.lock
+        run: if [ -f composer.json ];then composer validate;fi
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: if [ -f composer.json ];then composer install --no-dev --prefer-dist --no-progress;fi
+
+      - name: Optimize Laravel config for production
+        run: php artisan optimize
+
+      - name: Optimize Filament for production
+        run: php artisan filament:optimize
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          cache: 'yarn'
+
+      - name: Install Node dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Build frontend assets
+        run: yarn build
+
+      - name: Remove node_modules
+        run: rm -rf node_modules
+
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.ftp_hostname }}
+          username: ${{ secrets.ftp_username }}
+          password: ${{ secrets.ftp_password }}
+          server-dir: ${{ secrets.ftp_serverdir }}
+
