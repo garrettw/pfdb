@@ -1,0 +1,55 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/php
+{
+	"name": "PHP + NodeJS",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/php:1-8.4-bullseye",
+
+	// Configure tool-specific properties.
+	"customizations": {
+	// Configure properties specific to VS Code.
+		"vscode": {
+			"extensions": [
+                "DEVSENSE.composer-php-vscode",
+                "neilbrayfield.php-docblocker",
+                "mehedidracula.php-namespace-resolver",
+                "github.vscode-github-actions",
+                "christian-kohler.npm-intellisense",
+                "christian-kohler.path-intellisense",
+                "esbenp.prettier-vscode",
+                "-xdebug.php-debug", // delete this line (and the comma above) if you want to use Xdebug
+                "nhoizey.gremlins",
+                "oderwat.indent-rainbow",
+                "bmewburn.vscode-intelephense-client",
+                "pflannery.vscode-versionlens",
+                "sonarsource.sonarlint-vscode",
+                "editorconfig.editorconfig",
+                "predrag-nikolic.php-class-helper",
+                "redhat.vscode-yaml"
+			]
+		}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [
+		8080
+	],
+	"features": {
+        "ghcr.io/devcontainers/features/node:1": {
+            // See https://github.com/devcontainers/images/tree/main/src/php#installing-nodejs
+            "version": "latest"
+        },
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/opencodeco/devcontainers/install-php-extensions:0": {
+            // add the extensions you need as a space-separated list in this string
+			"extensions": "pdo_mysql intl zip" // required by filament: intl, zip
+		},
+		"ghcr.io/devcontainers-extra/features/mysql-homebrew:1": {}
+	},
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html; if [ -f composer.json ];then composer install;fi"
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
