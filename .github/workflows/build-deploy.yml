@@ -75,6 +75,33 @@ jobs:
       - name: Remove node_modules
         run: rm -rf node_modules
 
+      - name: Prepare .env for deployment
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          DB_CONNECTION: mysql
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          # Start from example env to keep project defaults
+          if [ -f .env ]; then rm -f .env; fi
+          if [ -f .env.example ]; then cp .env.example .env; else echo "Missing .env.example"; exit 1; fi
+
+          # Generate and write APP_KEY into .env
+          php artisan key:generate --ansi --force
+
+          # Replace common DB and URL settings using secrets
+          sed -i "s|^APP_URL=.*|APP_URL=${APP_URL}|" .env
+          sed -i "s|^DB_CONNECTION=.*|DB_CONNECTION=${DB_CONNECTION}|" .env
+          sed -i "s|^DB_HOST=.*|DB_HOST=${DB_HOST}|" .env
+          sed -i "s|^DB_DATABASE=.*|DB_DATABASE=${DB_DATABASE}|" .env
+          sed -i "s|^DB_USERNAME=.*|DB_USERNAME=${DB_USERNAME}|" .env
+          sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=${DB_PASSWORD}|" .env
+
+          # Show the resulting keys (but do NOT print secrets values) for debugging
+          grep -E "^(APP_KEY|APP_URL|DB_CONNECTION|DB_HOST|DB_DATABASE|DB_USERNAME)=" .env || true
+
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
