@@ -61,19 +61,19 @@ jobs:
       - name: Optimize Filament for production
         run: php artisan filament:optimize
 
-      - name: Setup NodeJS
-        uses: actions/setup-node@v4
-        with:
-          cache: 'yarn'
+      # - name: Setup NodeJS
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     cache: 'yarn'
 
-      - name: Install Node dependencies
-        run: yarn --frozen-lockfile
+      # - name: Install Node dependencies
+      #   run: yarn --frozen-lockfile
 
-      - name: Build frontend assets
-        run: yarn build
+      # - name: Build frontend assets
+      #   run: yarn build
 
-      - name: Remove node_modules
-        run: rm -rf node_modules
+      # - name: Remove node_modules
+      #   run: rm -rf node_modules
 
       - name: Prepare .env for deployment
         env:
