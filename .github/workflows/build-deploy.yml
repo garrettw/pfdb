@@ -3,11 +3,20 @@ name: 🚀 Build & Deploy website
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
+  #push:
+    #branches: [ "main" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      create_artifact:
+        description: 'Create zip artifact instead of FTP deploy'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -102,7 +111,21 @@ jobs:
           # Show the resulting keys (but do NOT print secrets values) for debugging
           grep -E "^(APP_KEY|APP_URL|DB_CONNECTION|DB_HOST|DB_DATABASE|DB_USERNAME)=" .env || true
 
-      - name: 📂 Sync files
+      - name: 📦 Create zip artifact (optional)
+        if: ${{ github.event.inputs.create_artifact == 'true' }}
+        run: |
+          zip -r pfdb-build.zip .
+
+      - name: 📥 Upload artifact
+        if: ${{ github.event.inputs.create_artifact == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: pfdb-build
+          path: pfdb-build.zip
+          retention-days: 7
+
+      - name: 📂 Sync files via FTP
+        if: ${{ github.event.inputs.create_artifact != 'true' }}
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.ftp_hostname }}
