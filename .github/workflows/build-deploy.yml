@@ -1,16 +1,12 @@
-name: 🚀 Build & Deploy website
+name: 🚀 Build & Deploy
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   #push:
     #branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
       create_artifact:
-        description: 'Create zip artifact instead of FTP deploy'
+        description: 'Create zip artifact instead of deploying'
         required: false
         default: 'false'
         type: choice
@@ -18,17 +14,11 @@ on:
           - 'false'
           - 'true'
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  web-deploy:
-    # The type of runner that the job will run on
+  deploy:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: 🚚 Get latest code
+      - name: 🚚 Checkout latest code
         uses: actions/checkout@v4
 
       - name: Setup PHP
@@ -36,7 +26,7 @@ jobs:
         with:
           php-version: '8.4'
           coverage: none
-          extensions: pdo, intl, zip
+          extensions: mbstring, pdo, intl, zip
 
       - name: Setup problem matchers for PHP
         run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
@@ -48,7 +38,7 @@ jobs:
         run: composer -V
 
       - name: Validate composer.json and composer.lock
-        run: if [ -f composer.json ];then composer validate;fi
+        run: composer validate
 
       - name: Get composer cache directory
         id: composer-cache
@@ -58,11 +48,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Install dependencies
-        run: if [ -f composer.json ];then composer install --no-dev --prefer-dist --no-progress;fi
+      - name: Install Composer Dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
       - name: Optimize Laravel config for production
         run: php artisan optimize
@@ -70,51 +60,23 @@ jobs:
       - name: Optimize Filament for production
         run: php artisan filament:optimize
 
-      # - name: Setup NodeJS
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     cache: 'yarn'
+#      - name: Setup Node
+#        uses: actions/setup-node@v4
+#        with:
+#          node-version: '24'
+#          cache: 'yarn'
+#      - name: Install Node Dependencies
+#        run: yarn install --frozen-lockfile
+#      - name: Build Assets
+#        run: yarn build
+#      - name: Remove node_modules
+#        run: rm -rf node_modules
 
-      # - name: Install Node dependencies
-      #   run: yarn --frozen-lockfile
+      - name: Create dummy .env
+        run: touch .env
 
-      # - name: Build frontend assets
-      #   run: yarn build
-
-      # - name: Remove node_modules
-      #   run: rm -rf node_modules
-
-      - name: Prepare .env for deployment
-        env:
-          APP_URL: ${{ secrets.APP_URL }}
-          DB_CONNECTION: mysql
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        run: |
-          # Start from example env to keep project defaults
-          if [ -f .env ]; then rm -f .env; fi
-          if [ -f .env.example ]; then cp .env.example .env; else echo "Missing .env.example"; exit 1; fi
-
-          # Generate and write APP_KEY into .env
-          php artisan key:generate --ansi --force
-
-          # Replace common DB and URL settings using secrets
-          sed -i "s|^APP_URL=.*|APP_URL=${APP_URL}|" .env
-          sed -i "s|^DB_CONNECTION=.*|DB_CONNECTION=${DB_CONNECTION}|" .env
-          sed -i "s|^DB_HOST=.*|DB_HOST=${DB_HOST}|" .env
-          sed -i "s|^DB_DATABASE=.*|DB_DATABASE=${DB_DATABASE}|" .env
-          sed -i "s|^DB_USERNAME=.*|DB_USERNAME=${DB_USERNAME}|" .env
-          sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=${DB_PASSWORD}|" .env
-
-          # Show the resulting keys (but do NOT print secrets values) for debugging
-          grep -E "^(APP_KEY|APP_URL|DB_CONNECTION|DB_HOST|DB_DATABASE|DB_USERNAME)=" .env || true
-
-      - name: 📦 Create zip artifact (optional)
-        if: ${{ github.event.inputs.create_artifact == 'true' }}
-        run: |
-          zip -r pfdb-build.zip .
+      - name: Generate Deployment Artifact
+        run: zip -r deploy.zip . -x "*.git*" "*.github*"
 
       - name: 📥 Upload artifact
         if: ${{ github.event.inputs.create_artifact == 'true' }}
@@ -124,12 +86,13 @@ jobs:
           path: pfdb-build.zip
           retention-days: 7
 
-      - name: 📂 Sync files via FTP
-        if: ${{ github.event.inputs.create_artifact != 'true' }}
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v21
         with:
-          server: ${{ secrets.ftp_hostname }}
-          username: ${{ secrets.ftp_username }}
-          password: ${{ secrets.ftp_password }}
-          server-dir: ${{ secrets.ftp_serverdir }}
-
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: pfdb
+          environment_name: pfdb-prod
+          version_label: "ver-${{ github.sha }}"
+          region: us-east-1
+          deployment_package: deploy.zip
