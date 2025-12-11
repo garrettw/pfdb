@@ -54,12 +54,6 @@ jobs:
       - name: Install Composer Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
-      - name: Optimize Laravel config for production
-        run: php artisan optimize
-
-      - name: Optimize Filament for production
-        run: php artisan filament:optimize
-
 #      - name: Setup Node
 #        uses: actions/setup-node@v4
 #        with:
