@@ -1,12 +1,12 @@
 name: 🚀 Build & Deploy
 
 on:
-  #push:
-    #branches: [ "main" ]
+  push:
+    branches: [ "main" ]
   workflow_dispatch:
     inputs:
       create_artifact:
-        description: 'Create zip artifact instead of deploying'
+        description: 'Create zip artifact ONLY'
         required: false
         default: 'false'
         type: choice
