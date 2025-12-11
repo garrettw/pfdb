@@ -1,10 +1,8 @@
 #!/bin/bash
 # Elastic Beanstalk migration script with EB environment variable support
 
-APP_DIR="/var/app/current"
-
-# Ensure working directory is correct
-cd "$APP_DIR" || { echo "[eb-migrate] ERROR: Failed to cd to $APP_DIR" >&2; exit 1; }
+# Use the current working directory (should already be the app dir when EB runs this)
+APP_DIR="$(pwd)"
 
 # Read EB environment properties using get-config utility
 {
@@ -20,27 +18,22 @@ export DB_PASSWORD=$(/opt/elasticbeanstalk/bin/get-config environment -k DB_PASS
 
 # Log the configuration and environment details
 {
-  echo "[eb-migrate] Diagnostics:"
   echo "[eb-migrate] DB_CONNECTION=$DB_CONNECTION"
   echo "[eb-migrate] DB_HOST=$DB_HOST"
   echo "[eb-migrate] DB_DATABASE=$DB_DATABASE"
   echo "[eb-migrate] DB_USERNAME=$DB_USERNAME"
-  echo "[eb-migrate] APP_DIR=$APP_DIR"
-  echo "[eb-migrate] PWD=$(pwd)"
-  echo "[eb-migrate] USER=$(whoami)"
-  echo "[eb-migrate] UID=$(id -u)"
   echo ""
 } >&2
 
 # Check if php artisan exists
-if [ ! -f "$APP_DIR/artisan" ]; then
-  echo "[eb-migrate] ERROR: artisan file not found at $APP_DIR/artisan" >&2
+if [ ! -f "artisan" ]; then
+  echo "[eb-migrate] ERROR: artisan file not found in $(pwd)" >&2
   exit 1
 fi
 
 # Skip migration if sqlite DB file doesn't exist
-if [ "$DB_CONNECTION" = "sqlite" ] && [ ! -f "$APP_DIR/database/database.sqlite" ]; then
-  echo "[eb-migrate] WARNING: sqlite DB file missing at $APP_DIR/database/database.sqlite; skipping migrate" >&2
+if [ "$DB_CONNECTION" = "sqlite" ] && [ ! -f "database/database.sqlite" ]; then
+  echo "[eb-migrate] WARNING: sqlite DB file missing at database/database.sqlite; skipping migrate" >&2
   exit 0
 fi
 
