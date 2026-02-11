@@ -40,7 +40,7 @@
             "version": "latest"
         },
 		"ghcr.io/devcontainers/features/github-cli:1": {},
-		"ghcr.io/opencodeco/devcontainers/install-php-extensions:0": {
+		"./features/install-php-extensions": {
             // add the extensions you need as a space-separated list in this string
 			"extensions": "pdo_mysql intl zip" // required by filament: intl, zip
 		},
