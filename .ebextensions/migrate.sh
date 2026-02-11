@@ -10,11 +10,12 @@ APP_DIR="$(pwd)"
   echo ""
 } >&2
 
-export DB_CONNECTION=$(/opt/elasticbeanstalk/bin/get-config environment -k DB_CONNECTION 2>/dev/null || echo "sqlite")
-export DB_HOST=$(/opt/elasticbeanstalk/bin/get-config environment -k DB_HOST 2>/dev/null || echo "")
-export DB_DATABASE=$(/opt/elasticbeanstalk/bin/get-config environment -k DB_DATABASE 2>/dev/null || echo "")
-export DB_USERNAME=$(/opt/elasticbeanstalk/bin/get-config environment -k DB_USERNAME 2>/dev/null || echo "")
-export DB_PASSWORD=$(/opt/elasticbeanstalk/bin/get-config environment -k DB_PASSWORD 2>/dev/null || echo "")
+source /opt/elasticbeanstalk/deployment/env
+#export DB_CONNECTION=$(/opt/elasticbeanstalk/bin/get-config environment -k DB_CONNECTION 2>/dev/null || echo "sqlite")
+#export DB_HOST=$(/opt/elasticbeanstalk/bin/get-config environment -k DB_HOST 2>/dev/null || echo "")
+#export DB_DATABASE=$(/opt/elasticbeanstalk/bin/get-config environment -k DB_DATABASE 2>/dev/null || echo "")
+#export DB_USERNAME=$(/opt/elasticbeanstalk/bin/get-config environment -k DB_USERNAME 2>/dev/null || echo "")
+#export DB_PASSWORD=$(/opt/elasticbeanstalk/bin/get-config environment -k DB_PASSWORD 2>/dev/null || echo "")
 
 # Log the configuration and environment details
 {
