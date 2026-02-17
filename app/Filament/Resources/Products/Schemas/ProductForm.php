@@ -9,7 +9,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use App\Models\Attribute;
-use Filament\Infolists\Components\TextEntry;
 
 class ProductForm
 {
@@ -24,8 +23,7 @@ class ProductForm
                             ->required()
                             ->searchable()
                             ->preload()
-                            ->live()
-                            ->afterStateUpdated(fn (callable $set) => $set('attributes', [])),
+                            ->live(),
                         TextInput::make('name')
                             ->required()
                             ->placeholder('Product name'),
@@ -74,11 +72,7 @@ class ProductForm
                         $categoryId = $get('category_id');
 
                         if (!$categoryId) {
-                            return [
-                                TextEntry::make('select_category')
-                                    ->state('Please select a category first to see available metrics.')
-                                    ->columnSpanFull(),
-                            ];
+                            return [];
                         }
 
                         $attributes = Attribute::where('category_id', $categoryId)
@@ -86,11 +80,7 @@ class ProductForm
                             ->get();
 
                         if ($attributes->isEmpty()) {
-                            return [
-                                TextEntry::make('no_attributes')
-                                    ->state('No attributes defined for this category yet.')
-                                    ->columnSpanFull(),
-                            ];
+                            return [];
                         }
 
                         $fields = [];
