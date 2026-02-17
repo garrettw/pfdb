@@ -37,7 +37,7 @@ class CategoryView extends Component
 
     public function render()
     {
-        $attributes = collect($this->category->attributes);
+        $tableLayouts = $this->category->tableLayouts()->with('layoutColumns.attribute')->get();
 
         $query = Product::where('category_id', $this->category->id)
             ->with('productAttributes.attribute', 'retailerLinks.retailer');
@@ -51,7 +51,13 @@ class CategoryView extends Component
         }
 
         if ($this->sortBy) {
-            $attribute = $attributes->firstWhere('id', $this->sortBy);
+            // Get all attributes from all table layouts to find the one being sorted
+            $allAttributes = $tableLayouts
+                ->flatMap(fn($layout) => $layout->layoutColumns)
+                ->map(fn($column) => $column->attribute)
+                ->unique('id');
+            
+            $attribute = $allAttributes->firstWhere('id', $this->sortBy);
 
             if ($attribute) {
                 $query->leftJoin('product_attributes', function($join) {
@@ -71,7 +77,7 @@ class CategoryView extends Component
         $products = $query->get();
 
         return view('livewire.category-view', [
-            'attributes' => $attributes,
+            'tableLayouts' => $tableLayouts,
             'products' => $products,
         ])->layout('layouts.app');
     }

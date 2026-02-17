@@ -46,4 +46,9 @@ class Category extends Model
     {
         return $this->hasMany(Attribute::class)->orderBy('display_order');
     }
+
+    public function tableLayouts(): HasMany
+    {
+        return $this->hasMany(CategoryTableLayout::class)->orderBy('display_order');
+    }
 }
