@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Livewire\Component;
 use Livewire\Attributes\Url;
+use Illuminate\Support\Facades\DB;
 
 class CategoryView extends Component
 {
@@ -56,7 +57,7 @@ class CategoryView extends Component
                 ->flatMap(fn($layout) => $layout->layoutColumns)
                 ->map(fn($column) => $column->attribute)
                 ->unique('id');
-            
+
             $attribute = $allAttributes->firstWhere('id', $this->sortBy);
 
             if ($attribute) {
@@ -67,7 +68,9 @@ class CategoryView extends Component
                 ->select('products.*');
 
                 if ($attribute->type === 'numeric') {
-                    $query->orderByRaw('CAST(product_attributes.value AS REAL) ' . ($this->sortDirection === 'desc' ? 'DESC' : 'ASC'));
+                    // Use appropriate cast type based on database driver
+                    $castType = DB::getDriverName() === 'mysql' ? 'DECIMAL' : 'REAL';
+                    $query->orderByRaw('CAST(product_attributes.value AS ' . $castType . ') ' . ($this->sortDirection === 'desc' ? 'DESC' : 'ASC'));
                 } else {
                     $query->orderBy('product_attributes.value', $this->sortDirection);
                 }
