@@ -4,7 +4,7 @@
             <div class="mb-8">
                 <h1 class="text-3xl font-bold text-gray-900">Product Testing Results</h1>
                 <p class="mt-2 text-gray-600">
-                    Browse and compare test results from Project Farm videos. Click a category to see detailed product comparisons.
+                    Browse and compare test results from product review videos. Click a category to see detailed product comparisons.
                 </p>
             </div>
 

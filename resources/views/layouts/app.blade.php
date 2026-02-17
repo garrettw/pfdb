@@ -24,7 +24,7 @@
                         <div class="flex">
                             <div class="flex-shrink-0 flex items-center">
                                 <a href="/" class="text-xl font-bold text-gray-900">
-                                    Project Farm Catalog
+                                    PFDB
                                 </a>
                             </div>
                             <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
