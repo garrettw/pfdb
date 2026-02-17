@@ -104,8 +104,16 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach($products as $product)
                                         <tr class="hover:bg-gray-50">
-                                            <td class="px-6 py-4 whitespace-nowrap sticky left-0 bg-white">
-                                                <div class="font-medium text-gray-900">{{ $product->name }}</div>
+                                            <td class="px-4 py-2 whitespace-nowrap sticky left-0 bg-white">
+                                                <div class="font-medium text-gray-900">
+                                                    @if($product->retailerLinks->count() > 0)
+                                                        <a href="#links" class="text-indigo-600 hover:text-indigo-800">
+                                                            {{ $product->name }}
+                                                        </a>
+                                                    @else
+                                                        {{ $product->name }}
+                                                    @endif
+                                                </div>
                                                 @if($product->brand && $product->brand !== $product->name)
                                                     <div class="text-sm text-gray-500">{{ $product->brand }}</div>
                                                 @endif
@@ -114,7 +122,7 @@
                                                 @endif
                                             </td>
                                             @foreach($layout->layoutColumns as $column)
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
                                                     {{ $product->getEavAttribute($column->attribute->id) ?? '-' }}
                                                 </td>
                                             @endforeach
@@ -131,22 +139,25 @@
                 </div>
             @endif
             @if(!$products->isEmpty())
-                @foreach($products as $product)
-                    @if($product->retailerLinks->count() > 0)
-                        <div class="mt-2 flex flex-wrap gap-1">
-                            {{ $product->name }} <em>is available at:</em>
-                            @foreach($product->retailerLinks as $link)
-                                <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition">
-                                    {{ $link->retailer->name }}
-                                    <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M11 3a1 1 0 100 2h3.586L9.293 9.293a1 1 0 101.414 1.414L16 6.414V10a1 1 0 102 0V4a1 1 0 00-1-1h-6z"></path>
-                                        <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
-                                    </svg>
-                                </a>
-                            @endforeach
-                        </div>
-                    @endif
-                @endforeach
+                <h2 id="links" class="text-2xl font-bold text-gray-900 mb-4">Where to Buy</h2>
+                <div class="mb-8 bg-white rounded-lg shadow p-6">
+                    @foreach($products as $product)
+                        @if($product->retailerLinks->count() > 0)
+                            <div class="mt-2 flex flex-wrap gap-1">
+                                <span class="font-medium text-gray-900">{{ $product->name }}</span> <em>is available at:</em>
+                                @foreach($product->retailerLinks as $link)
+                                    <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition">
+                                        {{ $link->retailer->name }}
+                                        <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M11 3a1 1 0 100 2h3.586L9.293 9.293a1 1 0 101.414 1.414L16 6.414V10a1 1 0 102 0V4a1 1 0 00-1-1h-6z"></path>
+                                            <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
+                                        </svg>
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
             @endif
         </div>
     </div>
