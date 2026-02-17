@@ -12,10 +12,7 @@
                 <div class="bg-white rounded-lg shadow p-6">
                     <div class="text-center">
                         <h3 class="text-lg font-medium text-gray-900 mb-2">No Categories Yet</h3>
-                        <p class="text-gray-600 mb-4">Get started by adding categories in the admin panel.</p>
-                        <a href="/admin" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white hover:bg-indigo-700">
-                            Go to Admin Panel
-                        </a>
+                        <p class="text-gray-600">We're still gathering data. Check back soon for product comparisons!</p>
                     </div>
                 </div>
             @else

@@ -76,10 +76,12 @@
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                                                 wire:click="sortByAttribute({{ $column->attribute->id }})">
                                                 <div class="flex items-center space-x-1">
-                                                    <span>{{ $column->label ?? $column->attribute->name }}</span>
-                                                    @if($column->attribute->unit)
-                                                        <span class="text-gray-400">({{ $column->attribute->unit }})</span>
-                                                    @endif
+                                                    <span>
+                                                        {{ $column->label ?? $column->attribute->name }}
+                                                        @if($column->attribute->unit)
+                                                            <span class="text-gray-400">({{ $column->attribute->unit }})</span>
+                                                        @endif
+                                                    </span>
                                                     @if($sortBy == $column->attribute->id)
                                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                                             @if($sortDirection === 'asc')
