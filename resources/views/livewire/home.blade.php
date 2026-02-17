@@ -27,9 +27,14 @@
                                     {{ $category->description }}
                                 </p>
                                 <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-500">
-                                        {{ $category->products_count }} {{ Str::plural('product', $category->products_count) }}
-                                    </span>
+                                    <div>
+                                        <p class="text-gray-500">
+                                            {{ $category->products_count }} {{ Str::plural('product', $category->products_count) }}
+                                        </p>
+                                        <p class="text-gray-400 text-xs mt-1">
+                                            Updated {{ $category->updated_at->diffForHumans() }}
+                                        </p>
+                                    </div>
                                     <span class="text-indigo-600 group-hover:translate-x-1 transition-transform duration-200 inline-block">
                                         View →
                                     </span>
