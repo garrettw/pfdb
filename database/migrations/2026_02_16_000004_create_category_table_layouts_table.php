@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('category_table_layouts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
+            $table->integer('category_id');
             $table->string('name');
             $table->longText('content')->nullable();
             $table->unsignedSmallInteger('display_order')->default(0);
@@ -21,6 +21,8 @@ return new class extends Migration
 
             $table->index('category_id');
             $table->index('display_order');
+
+            $table->foreign('category_id')->references('id')->on('categories')->cascadeOnDelete();
         });
     }
 

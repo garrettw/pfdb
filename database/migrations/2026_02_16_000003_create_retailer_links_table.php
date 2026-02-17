@@ -13,14 +13,17 @@ return new class extends Migration
     {
         Schema::create('retailer_links', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
-            $table->foreignId('retailer_id')->constrained('retailers')->cascadeOnDelete();
+            $table->integer('product_id');
+            $table->unsignedBigInteger('retailer_id');
             $table->string('url');
             $table->timestamps();
 
             $table->index('product_id');
             $table->index('retailer_id');
             $table->unique(['product_id', 'retailer_id']);
+
+            $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
+            $table->foreign('retailer_id')->references('id')->on('retailers')->cascadeOnDelete();
         });
     }
 
