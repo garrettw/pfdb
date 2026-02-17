@@ -26,15 +26,20 @@ class Product extends Model
         return $this->hasMany(ProductAttribute::class);
     }
 
+    public function retailerLinks(): HasMany
+    {
+        return $this->hasMany(RetailerLink::class);
+    }
+
     public function getEavAttribute($attributeId)
     {
         if ($this->relationLoaded('productAttributes')) {
             $productAttribute = $this->productAttributes
                 ->firstWhere('attribute_id', $attributeId);
-            
+
             return $productAttribute ? $productAttribute->value : null;
         }
-        
+
         return $this->productAttributes()
             ->where('attribute_id', $attributeId)
             ->value('value');

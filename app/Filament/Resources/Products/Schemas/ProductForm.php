@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Products\Schemas;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use App\Models\Attribute;
@@ -34,6 +35,37 @@ class ProductForm
                             ->placeholder('Model number'),
                         Textarea::make('notes')
                             ->rows(3)
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Retailer Links')
+                    ->schema([
+                        Repeater::make('retailerLinks')
+                            ->relationship()
+                            ->schema([
+                                Select::make('retailer_id')
+                                    ->label('Retailer')
+                                    ->relationship('retailer', 'name')
+                                    ->required()
+                                    ->searchable()
+                                    ->preload()
+                                    ->createOptionForm([
+                                        TextInput::make('name')
+                                            ->required()
+                                            ->placeholder('e.g., Amazon, Best Buy'),
+                                        TextInput::make('url')
+                                            ->label('Retailer URL')
+                                            ->url()
+                                            ->placeholder('https://...'),
+                                    ]),
+                                TextInput::make('url')
+                                    ->label('Product URL')
+                                    ->url()
+                                    ->required()
+                                    ->placeholder('https://...'),
+                            ])
+                            ->columns(2)
+                            ->defaultItems(0)
                             ->columnSpanFull(),
                     ]),
 
