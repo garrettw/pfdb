@@ -13,6 +13,7 @@ class Category extends Model
         'slug',
         'description',
         'video_urls',
+        'content',
     ];
 
     protected $casts = [

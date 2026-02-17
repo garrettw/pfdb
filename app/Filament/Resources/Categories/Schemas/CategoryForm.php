@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Categories\Schemas;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
@@ -34,6 +35,10 @@ class CategoryForm
                     )
                     ->defaultItems(0)
                     ->columnSpanFull(),
+                RichEditor::make('content')
+                    ->label('Review Content')
+                    ->columnSpanFull()
+                    ->hint('This content will appear at the top of the category page above the products table'),
             ]);
     }
 }

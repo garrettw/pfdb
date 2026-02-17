@@ -27,11 +27,19 @@
                 @endif
             </div>
 
+            @if($category->content)
+                <div class="mb-8 bg-white rounded-lg shadow p-6">
+                    <div class="prose prose-lg max-w-none">
+                        {!! $category->content !!}
+                    </div>
+                </div>
+            @endif
+
             <div class="mb-6">
-                <input 
-                    type="text" 
-                    wire:model.live.debounce.300ms="search" 
-                    placeholder="Search products..." 
+                <input
+                    type="text"
+                    wire:model.live.debounce.300ms="search"
+                    placeholder="Search products..."
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 >
             </div>
