@@ -42,7 +42,7 @@
 		"ghcr.io/devcontainers/features/github-cli:1": {},
 		"./features/install-php-extensions": {
             // add the extensions you need as a space-separated list in this string
-			"extensions": "pdo_mysql intl zip" // required by filament: intl, zip
+			"extensions": "pdo_mysql intl zip exif" // required by filament: intl, zip, exif
 		},
 		"ghcr.io/devcontainers-extra/features/mysql-homebrew:1": {}
 	},

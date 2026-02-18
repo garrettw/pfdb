@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use CWSPS154\UsersRolesPermissions\UsersRolesPermissionsPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -54,6 +55,11 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            //->databaseNotifications() //need to see the export files for the permission
+            ->databaseTransactions() //optional
+            ->plugins([
+                // UsersRolesPermissionsPlugin::make(), // disabled until bug is fixed
             ]);
     }
 }
