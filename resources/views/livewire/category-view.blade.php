@@ -69,11 +69,11 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 bg-gray-50">
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 bg-gray-50">
                                             Product
                                         </th>
                                         @foreach($layout->layoutColumns as $column)
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                                                 wire:click="sortByAttribute({{ $column->attribute->id }})">
                                                 <div class="flex items-center space-x-1">
                                                     <span>
@@ -104,7 +104,7 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach($products as $product)
                                         <tr class="hover:bg-gray-50">
-                                            <td class="px-4 py-2 whitespace-nowrap sticky left-0 bg-white">
+                                            <td class="px-3 py-2 whitespace-nowrap sticky left-0 bg-white">
                                                 <div class="font-medium text-gray-900">
                                                     @if($product->retailerLinks->count() > 0)
                                                         <a href="#links" class="text-indigo-600 hover:text-indigo-800">
@@ -122,7 +122,7 @@
                                                 @endif
                                             </td>
                                             @foreach($layout->layoutColumns as $column)
-                                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                                                <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                                                     {{ $product->getEavAttribute($column->attribute->id) ?? '-' }}
                                                 </td>
                                             @endforeach
